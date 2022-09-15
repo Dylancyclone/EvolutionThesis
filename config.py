@@ -1,5 +1,5 @@
 # TODO: Change these to pathlib.Path
-thesis_path = "../Tese"
+thesis_path = "../thesis"
 stats_basepath = "./stats"
 compiled_pdfs_path = "./pdfs"
 pdf_pages_path = "./imgs"

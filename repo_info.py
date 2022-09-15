@@ -23,7 +23,7 @@ def create_commit_list(
         fhand.write("sha;message;timestamp\n")
         for commit in repo.iter_commits():
             sha = commit.hexsha
-            message = commit.message.rstrip()
+            message = commit.message.rstrip().replace("\n", " ")
             # Needs to be converted afterwards to a datetime object. To store,
             # will use the "pure" number.
             date = commit.committed_date

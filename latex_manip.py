@@ -57,7 +57,7 @@ def compile_pdf_from_sha(
     # It's easier to change dirs because of the latex commands, copy the pdf,
     # then change back
     original_dir = os.getcwd()
-    os.chdir(texfile_location)
+    os.chdir(texfile_location+"/paper")
 
     if fix_includeonly:
         maintex = open(mainfile_name, "r").readlines()

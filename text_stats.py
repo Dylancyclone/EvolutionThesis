@@ -121,7 +121,7 @@ class Stats:
     def stemmatize_words_(self) -> None:
         """Get the stems of words using SnowballStemmer"""
 
-        stemmer = SnowballStemmer("portuguese")
+        stemmer = SnowballStemmer("english")
         self.stems = [stemmer.stem(word) for word in self.tokens]
         self.unique_stems = list(
             set([stemmer.stem(word) for word in self.unique_tokens])
@@ -129,7 +129,7 @@ class Stats:
 
     def stemmatize_nonstopping_words_(self) -> None:
         """Get the stems of nonstopping words using SnowballStemmer"""
-        stemmer = SnowballStemmer("portuguese")
+        stemmer = SnowballStemmer("english")
         self.nonstopping_stems = [stemmer.stem(word) for word in self.reduced_tokens]
         self.unique_nonstopping_stems = list(set(self.nonstopping_stems))
 
@@ -171,14 +171,18 @@ class Stats:
         # Regex translation: any start of subequation environment
         subequation_env_regex = re.compile(r"\\begin{subequation\*?}")
 
-        self.old_eq_count = len(old_eq_regex.findall(self.text))
-        self._old_eq_count_DEBUG = [
+        self.old_eq_count = len([
             match
             for match in old_eq_regex.finditer(self.text)
-            if len(match.group()) > 250
-        ]
-        if self._old_eq_count_DEBUG:
-            print("CHECK old eq counter!")
+            if len(match.group()) < 250
+        ])
+        # self._old_eq_count_DEBUG = [
+        #     match
+        #     for match in old_eq_regex.finditer(self.text)
+        #     if len(match.group()) > 250
+        # ]
+        # if self._old_eq_count_DEBUG:
+        #     print("CHECK old eq counter!")
         self.display_eq_count = len(new_display_eq_regex.findall(self.text))
         self.inline_eq_count = len(new_inline_eq_regex.findall(self.text))
         self.eq_env_count = len(equation_env_regex.findall(self.text))
@@ -338,7 +342,7 @@ class Stats:
     def remove_common_words(self) -> None:
         """Removes common words (stopwords) from the word Counter object. """
 
-        stopwords = nltk.corpus.stopwords.words("portuguese")
+        stopwords = nltk.corpus.stopwords.words("english")
         self.reduced_tokens = [word for word in self.tokens if word not in stopwords]
         self.reduced_word_Counter = Counter(self.reduced_tokens)
 
@@ -451,7 +455,7 @@ class Stats:
                 "wo refs",
                 self.text,
             )
-        self.remove_unnumbered_equations()
+        # self.remove_unnumbered_equations()
         if self.debug:
             self._save_intermediary_text(
                 self.debug_output_path / (self.name + "-test.txt"),
@@ -721,7 +725,7 @@ def create_stats_all_tex_files(commit_hash: str, description: str) -> Stats:
 def create_stats_from_sha(
     sha: str,
     repo: git.Repo,
-    filename_pattern: str = "*.tex",
+    filename_pattern: str = "**/*.tex",
     merge: bool = True,
 ) -> List[Stats]:
     """Creates a stats object and computes its values starting from a commit
@@ -740,12 +744,13 @@ def create_stats_from_sha(
             then its a single item list.
     """
 
-    repo.git.checkout(sha)
+    repo.git.checkout(sha, force=True)
     date = repo.commit().committed_date
+    commit_message = repo.commit().message.partition("\n")[0]
 
-    path = pathlib.Path(thesis_path)
+    path = pathlib.Path(thesis_path+"/paper")
     tex_files = glob.glob(str(path / filename_pattern))
-    assert len(tex_files) >= 1
+    # assert len(tex_files) >= 1
 
     if merge:
         list_text: List[str] = []
@@ -757,7 +762,7 @@ def create_stats_from_sha(
             f"all",
             text=full_text,
             commit_hash=sha,
-            description="",
+            description=commit_message,
             date=date,
             output_path=stats_basepath,
         )

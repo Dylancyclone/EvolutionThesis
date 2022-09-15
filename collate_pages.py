@@ -276,7 +276,7 @@ def collate_all() -> None:
             print(" Already processed, skipping.", flush=True)
             continue
         # Hard coded because these seem to be the better size for my case
-        collate_pdf_by_sha(commit["sha"], rows=15, cols=25)
+        collate_pdf_by_sha(commit["sha"], rows=8, cols=12)
         print(" Done.", flush=True)
 
 

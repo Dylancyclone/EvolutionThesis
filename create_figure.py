@@ -447,7 +447,7 @@ def add_wordcloud(ax_wc, cloud: WordCloud):
 def add_stats_graph(
     ax_stats,
     list_of_Stats: List[Stats],
-    start_timestamp: int = 1531090905,
+    start_timestamp: int = 1620245425,
 ) -> None:
     """Creates a graph using the attributes specified, using the list_of_Stats,
     which can be a subset of the total stats you want to consider.
@@ -557,7 +557,7 @@ def add_header(
     # Calculate stuff
     timedelta = datetime.datetime.fromtimestamp(
         int(current_Stat.date)
-    ) - datetime.datetime.fromtimestamp(int(reference_Stat.date))
+    ) - datetime.datetime.fromtimestamp(1620245425)
     date = str(datetime.datetime.fromtimestamp(int(current_Stat.date)))
     sha = current_Stat.commit_hash
     pagenum = len(list((Path(pdf_pages_path) / current_Stat.commit_hash).glob("*png")))
@@ -710,7 +710,7 @@ def create_all_graphs() -> None:
         ax_text.imshow(fig_text)
 
         # Next, fill in the header.
-        message = commit_status_messages.get(stat.commit_hash, None)
+        message = stat.description
         if not message:
             message = previous_message
         else:
